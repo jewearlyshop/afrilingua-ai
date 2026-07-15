@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pydantic
+transformers
+torch
+regex
+pytest
+black
+ruff
+mypy
