@@ -11,7 +11,7 @@ function App() {
     const value = e.target.value;
     setText(value);
 
-    if (!value) {
+    if (!value.trim()) {
       setSuggestions([]);
       return;
     }
@@ -23,13 +23,35 @@ function App() {
 
       setSuggestions(response.data.suggestions);
     } catch (error) {
-      console.error(error);
+      console.error("Prediction error:", error);
+      setSuggestions([]);
     }
   }
 
+  function handleSuggestionClick(word) {
+    const words = text.split(" ");
+
+    // Replace only the last word being typed
+    words[words.length - 1] = word;
+
+    setText(words.join(" "));
+    setSuggestions([]);
+  }
+
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto" }}>
+    <div
+      style={{
+        maxWidth: "700px",
+        margin: "40px auto",
+        padding: "20px",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
       <h1>🌍 AfriLingua AI</h1>
+
+      <p>
+        Intelligent Yoruba predictive keyboard powered by AI.
+      </p>
 
       <SearchBox
         value={text}
@@ -38,7 +60,7 @@ function App() {
 
       <SuggestionBar
         suggestions={suggestions}
-        onSelect={setText}
+        onSelect={handleSuggestionClick}
       />
     </div>
   );

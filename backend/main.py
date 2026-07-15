@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers.predict import router
+from backend.routers.predict import router
 
 app = FastAPI(
     title="AfriLingua AI",

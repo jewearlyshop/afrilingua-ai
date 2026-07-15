@@ -6,9 +6,11 @@ function SearchBox({ value, onChange }) {
       placeholder="Type Yoruba..."
       style={{
         width: "100%",
-        padding: 16,
-        fontSize: 24,
-        borderRadius: 10,
+        padding: "16px",
+        fontSize: "24px",
+        borderRadius: "10px",
+        border: "1px solid #ccc",
+        boxSizing: "border-box",
       }}
     />
   );
