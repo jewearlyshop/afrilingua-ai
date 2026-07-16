@@ -9,10 +9,8 @@ class PredictionPipeline:
         self.bigram = get_bigram()
 
     def predict(self, text: str):
-        # Preserve the original text to detect a trailing space
-        original_text = text
+        original = text
 
-        # Remove only leading spaces
         text = text.lstrip()
 
         if not text:
@@ -20,11 +18,28 @@ class PredictionPipeline:
 
         words = text.split()
 
-        # User has completed a word and typed a space
-        if original_text.endswith(" ") and words:
+        # Predict next word after a completed word
+        if original.endswith(" "):
             previous = normalize_text(words[-1])
             return self.bigram.predict(previous)
 
-        # User is typing the current word
+        # Typing the first word
+        if len(words) == 1:
+            current = normalize_text(words[0])
+            return self.engine.suggest(current)
+
+        previous = normalize_text(words[-2])
         current = normalize_text(words[-1])
+
+        context = self.bigram.predict(previous)
+
+        filtered = [
+            word
+            for word in context
+            if word.startswith(current)
+        ]
+
+        if filtered:
+            return filtered
+
         return self.engine.suggest(current)
