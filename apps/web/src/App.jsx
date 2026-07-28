@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import api from "./services/api";
 import SearchBox from "./components/SearchBox";
 import SuggestionBar from "./components/SuggestionBar";
@@ -6,7 +6,9 @@ import SuggestionBar from "./components/SuggestionBar";
 function App() {
   const [text, setText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef(null);
+  
   async function handleChange(e) {
     const value = e.target.value;
     setText(value);
@@ -22,22 +24,108 @@ function App() {
       );
 
       setSuggestions(response.data.suggestions);
+      setSelectedIndex(0);
     } catch (error) {
       console.error("Prediction error:", error);
       setSuggestions([]);
     }
   }
 
-  function handleSuggestionClick(word) {
-    const words = text.split(" ");
+ async function handleSuggestionClick(word) {
+  const endsWithSpace = text.endsWith(" ");
+  let words = text.trim().split(" ");
 
-    // Replace only the last word being typed
-    words[words.length - 1] = word;
+  // Record learning
+  const previous = endsWithSpace
+    ? words[words.length - 1]
+    : words[words.length - 1];
 
-    setText(words.join(" "));
-    setSuggestions([]);
+  try {
+    await api.post("/history/", {
+      previous,
+      selected: word,
+    });
+  } catch (error) {
+    console.error("History error:", error);
   }
 
+  if (endsWithSpace) {
+    // User finished a word and is choosing the NEXT word
+    words.push(word);
+  } else {
+    // User is completing the current word
+    words[words.length - 1] = word;
+  }
+
+  setText(words.join(" ") + " ");
+  setSuggestions([]);
+}
+ function handleKeyDown(event) {
+  console.log("Key pressed:", event.key);
+  if (!suggestions.length) {
+    return;
+  }
+
+  switch (event.key) {
+  case "ArrowDown":
+  event.preventDefault();
+
+  setSelectedIndex((index) => {
+    const next = (index + 1) % suggestions.length;
+    return next;
+  });
+
+  requestAnimationFrame(() => {
+    inputRef.current?.focus();
+  });
+
+  break;
+   
+  case "ArrowUp":
+  event.preventDefault();
+
+  setSelectedIndex((index) => {
+    const next =
+      (index - 1 + suggestions.length) % suggestions.length;
+    return next;
+  });
+  requestAnimationFrame(() => {
+    inputRef.current?.focus();
+  });
+
+  break;
+
+  case "Enter":
+  event.preventDefault();
+
+  if (suggestions.length > 0) {
+    handleSuggestionClick(
+      suggestions[selectedIndex].word
+    );
+  }
+
+  break;
+
+case "Tab":
+  event.preventDefault();
+
+  if (suggestions.length > 0) {
+    handleSuggestionClick(
+      suggestions[selectedIndex].word
+    );
+  }
+
+  break;
+
+    case "Escape":
+      setSuggestions([]);
+      break;
+
+    default:
+      break;
+  }
+}
+console.log("selectedIndex =", selectedIndex);
   return (
     <div
       style={{
@@ -54,12 +142,15 @@ function App() {
       </p>
 
       <SearchBox
-        value={text}
-        onChange={handleChange}
+      ref={inputRef}
+      value={text}
+      onChange={handleChange}
+      onKeyDown={handleKeyDown}
       />
 
       <SuggestionBar
         suggestions={suggestions}
+        selectedIndex={selectedIndex}
         onSelect={handleSuggestionClick}
       />
     </div>

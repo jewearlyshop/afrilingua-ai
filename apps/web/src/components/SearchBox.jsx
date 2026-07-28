@@ -1,8 +1,15 @@
-function SearchBox({ value, onChange }) {
+import { forwardRef } from "react";
+
+const SearchBox = forwardRef(function SearchBox(
+  { value, onChange, onKeyDown },
+  ref
+) {
   return (
     <input
+      ref={ref}
       value={value}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       placeholder="Type Yoruba..."
       style={{
         width: "100%",
@@ -14,6 +21,6 @@ function SearchBox({ value, onChange }) {
       }}
     />
   );
-}
+});
 
 export default SearchBox;
