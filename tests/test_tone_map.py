@@ -1,4 +1,4 @@
-from tone_map import build_tone_map
+from engine.tone.tone_map import build_tone_map
 
 words = [
     "ọmọ",

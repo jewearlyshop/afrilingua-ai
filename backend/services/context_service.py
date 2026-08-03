@@ -11,7 +11,6 @@ def get_bigram():
     if _model is None:
         corpus = (
             Path(__file__).parents[2]
-            / "engine"
             / "corpus"
             / "yoruba_sample.txt"
         )

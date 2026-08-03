@@ -1,16 +1,20 @@
-from tone_restorer import ToneRestorer
+from engine.tone.tone_restorer import ToneRestorer
 
-words = [
+vocabulary = [
     "ọmọ",
+    "ọmọkùnrin",
+    "ọmọbìnrin",
     "ilé",
+    "ìwé",
+    "fẹ́",
+    "lọ",
     "ọba",
-    "ọkọ",
-    "ẹ̀kọ́",
-    "ọmọde",
 ]
 
-restorer = ToneRestorer(words)
+restorer = ToneRestorer(vocabulary)
 
-print(restorer.restore("omo"))
-print(restorer.restore("ile"))
-print(restorer.restore("oko"))
+print(restorer.restore_word("omo"))
+print(restorer.restore_word("ile"))
+print(restorer.restore_word("iwe"))
+
+print(restorer.restore_sentence("omo fe lo ile"))

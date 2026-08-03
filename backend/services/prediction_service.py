@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from engine.text import vocabulary
 from engine.text.vocabulary import build_vocabulary
 from engine.autocomplete.autocomplete import AutocompleteEngine
 
@@ -13,7 +12,6 @@ def get_engine():
     if _engine is None:
         corpus_path = (
             Path(__file__).parents[2]
-            / "engine"
             / "corpus"
             / "yoruba_sample.txt"
         )
