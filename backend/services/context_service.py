@@ -1,5 +1,4 @@
-from pathlib import Path
-
+from engine.text.corpus_loader import load_corpus
 from engine.ai.ngram import BigramModel
 
 _model = None
@@ -9,15 +8,7 @@ def get_bigram():
     global _model
 
     if _model is None:
-        corpus = (
-            Path(__file__).parents[2]
-            / "corpus"
-            / "yoruba_sample.txt"
-        )
-
-        text = corpus.read_text(
-            encoding="utf-8"
-        )
+        text = load_corpus()
 
         model = BigramModel()
         model.train(text)

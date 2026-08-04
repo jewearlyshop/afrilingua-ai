@@ -1,17 +1,7 @@
 from engine.tone.tone_restorer import ToneRestorer
 
-vocabulary = [
-    "ọmọ",
-    "ọmọkùnrin",
-    "ọmọbìnrin",
-    "ilé",
-    "ìwé",
-    "fẹ́",
-    "lọ",
-    "ọba",
-]
 
-restorer = ToneRestorer(vocabulary)
+restorer = ToneRestorer()
 
 print(restorer.restore_word("omo"))
 print(restorer.restore_word("ile"))

@@ -1,17 +1,26 @@
-from engine.tone.tone_map import build_tone_map
+import json
+from pathlib import Path
+
 from engine.text.tone_normalizer import strip_diacritics
 
 
 class ToneRestorer:
-    def __init__(self, vocabulary):
-        self.tone_map = build_tone_map(vocabulary)
+    def __init__(self):
+        path = (
+            Path(__file__).parent
+            / "tone_dictionary.json"
+        )
+
+        with path.open(encoding="utf-8") as f:
+            self.tone_map = json.load(f)
 
     def restore_word(self, word):
         key = strip_diacritics(word)
+
         matches = self.tone_map.get(key)
 
         if matches:
-            return matches[0]   # Best candidate for now
+            return matches[0]
 
         return word
 

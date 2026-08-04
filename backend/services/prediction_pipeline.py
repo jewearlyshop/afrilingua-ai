@@ -17,7 +17,7 @@ class PredictionPipeline:
         self.bigram = get_bigram()
         self.history = get_history()
         self.ranker = HybridRanker()
-        self.tone_restorer = ToneRestorer(self.engine.vocabulary)
+        self.tone_restorer = ToneRestorer()
         self.language_model = LanguageModel()
         self.user_learner = UserLearner()
 

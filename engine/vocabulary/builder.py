@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 
 from engine.text.tokenizer import tokenize
+from engine.text.normalizer import normalize_text
 
 
 def build_vocabulary(corpus_dir, output_file):
@@ -14,8 +15,19 @@ def build_vocabulary(corpus_dir, output_file):
         with file.open("r", encoding="utf-8") as f:
             text = f.read()
 
-        words = tokenize(text)
+        words = tokenize(
+            normalize_text(text)
+        )
+
         counter.update(words)
+
+    MIN_FREQUENCY = 1
+
+    counter = Counter({
+        word: count
+        for word, count in counter.items()
+        if count >= MIN_FREQUENCY
+    })
 
     output_path = Path(output_file)
     output_path.parent.mkdir(parents=True, exist_ok=True)
