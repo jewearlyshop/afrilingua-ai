@@ -1,3 +1,8 @@
+from importlib.resources import path
+from os import path
+import json
+from pathlib import Path
+
 from collections import defaultdict, Counter
 
 from engine.text.tokenizer import tokenize
@@ -21,3 +26,33 @@ class BigramModel:
             word
             for word, _ in self.model[previous_word].most_common(limit)
         ]
+    def save(self, output_file):
+        path = Path(output_file)
+
+        path.parent.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+        data = {
+            word: dict(counter)
+            for word, counter in self.model.items()
+        }
+
+        with path.open("w", encoding="utf-8") as f:
+            json.dump(
+                data,
+                f,
+                ensure_ascii=False,
+                indent=4
+            )
+    def load(self, input_file):
+        path = Path(input_file)
+
+        with path.open(encoding="utf-8") as f:
+            data = json.load(f)
+
+        self.model = defaultdict(Counter)
+
+        for word, counts in data.items():
+            self.model[word] = Counter(counts)    

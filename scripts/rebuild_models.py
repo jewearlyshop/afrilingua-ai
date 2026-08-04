@@ -34,6 +34,16 @@ build_tone_dictionary(
     VOCAB,
     TONE,
 )
+from engine.ai.builder import build_bigram_model
 
+BIGRAM = (
+    ROOT
+    / "engine"
+    / "models"
+    / "bigram.json"
+)
+print("Building bigram model...")
+
+build_bigram_model(BIGRAM)
 
 print("Done.")

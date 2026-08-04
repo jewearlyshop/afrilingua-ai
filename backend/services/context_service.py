@@ -1,17 +1,23 @@
-from engine.text.corpus_loader import load_corpus
+from pathlib import Path
+
 from engine.ai.ngram import BigramModel
 
 _model = None
+
+BIGRAM = (
+    Path(__file__).parents[2]
+    / "engine"
+    / "models"
+    / "bigram.json"
+)
 
 
 def get_bigram():
     global _model
 
     if _model is None:
-        text = load_corpus()
-
         model = BigramModel()
-        model.train(text)
+        model.load(BIGRAM)
 
         _model = model
 
