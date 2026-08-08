@@ -10,7 +10,7 @@ CORPUS = ROOT / "corpus"
 VOCAB = (
     ROOT
     / "engine"
-    / "vocabulary"
+    / "models"
     / "vocabulary.json"
 )
 print("Building vocabulary...")
@@ -25,7 +25,7 @@ from engine.tone.builder import build_tone_dictionary
 TONE = (
     ROOT
     / "engine"
-    / "tone"
+    / "models"
     / "tone_dictionary.json"
 )
 print("Building tone dictionary...")
