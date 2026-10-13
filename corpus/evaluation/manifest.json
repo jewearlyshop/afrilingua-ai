@@ -1,0 +1,58 @@
+[
+  {
+    "source": "corpus\\training\\00001.txt",
+    "training": "corpus\\training\\00001_train.txt",
+    "evaluation": "corpus\\evaluation\\00001_eval.txt",
+    "total_lines": 4316,
+    "training_lines": 3884,
+    "evaluation_lines": 432
+  },
+  {
+    "source": "corpus\\training\\00002.txt",
+    "training": "corpus\\training\\00002_train.txt",
+    "evaluation": "corpus\\evaluation\\00002_eval.txt",
+    "total_lines": 1541,
+    "training_lines": 1387,
+    "evaluation_lines": 154
+  },
+  {
+    "source": "corpus\\training\\00003.txt",
+    "training": "corpus\\training\\00003_train.txt",
+    "evaluation": "corpus\\evaluation\\00003_eval.txt",
+    "total_lines": 595,
+    "training_lines": 535,
+    "evaluation_lines": 60
+  },
+  {
+    "source": "corpus\\training\\00004.txt",
+    "training": "corpus\\training\\00004_train.txt",
+    "evaluation": "corpus\\evaluation\\00004_eval.txt",
+    "total_lines": 4136,
+    "training_lines": 3722,
+    "evaluation_lines": 414
+  },
+  {
+    "source": "corpus\\training\\00005.txt",
+    "training": "corpus\\training\\00005_train.txt",
+    "evaluation": "corpus\\evaluation\\00005_eval.txt",
+    "total_lines": 2700,
+    "training_lines": 2430,
+    "evaluation_lines": 270
+  },
+  {
+    "source": "corpus\\training\\00006.txt",
+    "training": "corpus\\training\\00006_train.txt",
+    "evaluation": "corpus\\evaluation\\00006_eval.txt",
+    "total_lines": 12,
+    "training_lines": 11,
+    "evaluation_lines": 1
+  },
+  {
+    "source": "corpus\\training\\00007.txt",
+    "training": "corpus\\training\\00007_train.txt",
+    "evaluation": "corpus\\evaluation\\00007_eval.txt",
+    "total_lines": 376,
+    "training_lines": 338,
+    "evaluation_lines": 38
+  }
+]
