@@ -1,184 +1,314 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
-
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
-}
-
-#center {
+﻿.app-shell {
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  box-sizing: border-box;
+}
+
+.keyboard-card {
+  width: min(900px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 42px 42px 30px;
+}
+
+.brand-mark {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: grid;
   place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  border-radius: 16px;
+  background: var(--accent);
+  color: white;
+  font-size: 25px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
 }
 
-#next-steps {
+.eyebrow {
+  margin: 3px 0 5px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.app-header h1 {
+  margin: 0;
+  color: var(--heading);
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.keyboard-panel {
+  margin: 0 42px 34px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--panel);
+}
+
+.input-header {
   display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
+.input-header > span {
+  color: var(--heading);
+  font-size: 13px;
+  font-weight: 700;
 }
 
-#next-steps ul {
-  list-style: none;
-  padding: 0;
+.input-status {
   display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+  align-items: center;
+  gap: 12px;
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+.status-dot {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.ticks {
-  position: relative;
+.clear-button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.clear-button:hover {
+  color: var(--accent);
+}
+
+.search-box textarea {
   width: 100%;
+  min-height: 118px;
+  resize: vertical;
+  box-sizing: border-box;
+  padding: 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 15px;
+  outline: none;
+  background: var(--surface);
+  color: var(--heading);
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 1.55;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+.search-box textarea::placeholder {
+  color: var(--placeholder);
+}
+
+.search-box textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.suggestion-area {
+  margin-top: 20px;
+}
+
+.suggestion-label {
+  margin-bottom: 9px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.suggestion-bar {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.suggestion-button {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--heading);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.suggestion-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.suggestion-button.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.suggestion-button kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.keyboard-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.keyboard-hint button {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 9px;
+  background: var(--surface);
+  color: var(--heading);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.keyboard-hint button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.error-message {
+  margin: 14px 0 0;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.keyboard-footer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--border);
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+}
+
+.feature + .feature {
+  border-left: 1px solid var(--border);
+}
+
+.feature-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.feature strong,
+.feature span {
+  display: block;
+}
+
+.feature strong {
+  color: var(--heading);
+  font-size: 13px;
+}
+
+.feature div > span {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 18px 12px;
+    align-items: flex-start;
   }
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
+  .keyboard-card {
+    border-radius: 20px;
   }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+
+  .app-header {
+    padding: 28px 22px 22px;
+  }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    border-radius: 13px;
+  }
+
+  .keyboard-panel {
+    margin: 0 14px 22px;
+    padding: 15px;
+  }
+
+  .keyboard-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .feature + .feature {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .search-box textarea {
+    font-size: 20px;
   }
 }

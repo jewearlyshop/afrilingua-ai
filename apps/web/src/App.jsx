@@ -1,159 +1,319 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "./services/api";
 import SearchBox from "./components/SearchBox";
 import SuggestionBar from "./components/SuggestionBar";
+import { applySuggestionSelection } from "./suggestionSelection";
+import "./App.css";
 
 function App() {
   const [text, setText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const inputRef = useRef(null);
-  
-  async function handleChange(e) {
-    const value = e.target.value;
-    setText(value);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  const inputRef = useRef(null);
+  const requestIdRef = useRef(0);
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
+
+  async function fetchSuggestions(value) {
     if (!value.trim()) {
       setSuggestions([]);
+      setSelectedIndex(0);
+      setLoading(false);
       return;
     }
+
+    const requestId = ++requestIdRef.current;
+
+    setLoading(true);
+    setError("");
 
     try {
       const response = await api.get(
         `/predict/${encodeURIComponent(value)}`
       );
 
-      setSuggestions(response.data.suggestions);
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      setSuggestions(response.data.suggestions || []);
       setSelectedIndex(0);
-    } catch (error) {
-      console.error("Prediction error:", error);
+    } catch (err) {
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      console.error("Prediction error:", err);
       setSuggestions([]);
+      setError("Prediction service unavailable.");
+    } finally {
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+      }
     }
   }
 
- async function handleSuggestionClick(word) {
-  const endsWithSpace = text.endsWith(" ");
-  let words = text.trim().split(" ");
+  function handleChange(event) {
+    const value = event.target.value;
 
-  // Record learning
-  const previous = endsWithSpace
-    ? words[words.length - 1]
-    : words[words.length - 1];
+    setText(value);
+    setError("");
 
-  try {
-    await api.post("/history/", {
-      previous,
-      selected: word,
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 35);
+  }
+
+  async function recordSelection(word) {
+    const trimmed = text.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    const words = trimmed.split(/\s+/);
+
+    let previous;
+
+    if (text.endsWith(" ")) {
+      previous = words[words.length - 1];
+    } else if (words.length > 1) {
+      previous = words[words.length - 2];
+    } else {
+      previous = words[0];
+    }
+
+    try {
+      await api.post("/history/", {
+        previous,
+        selected: word,
+      });
+    } catch (err) {
+      console.error("History error:", err);
+    }
+  }
+
+  function handleSuggestionClick(word) {
+    const nextState = applySuggestionSelection({
+      text,
+      word,
+      recordSelection,
     });
-  } catch (error) {
-    console.error("History error:", error);
+    const newText = nextState.text;
+
+    setText(newText);
+    setSuggestions(nextState.suggestions);
+    setSelectedIndex(nextState.selectedIndex);
+    setError(nextState.error);
+
+    requestIdRef.current += 1;
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+
+      if (inputRef.current) {
+        inputRef.current.setSelectionRange(
+          newText.length,
+          newText.length
+        );
+      }
+    });
   }
 
-  if (endsWithSpace) {
-    // User finished a word and is choosing the NEXT word
-    words.push(word);
-  } else {
-    // User is completing the current word
-    words[words.length - 1] = word;
-  }
+  function handleKeyDown(event) {
+    if (!suggestions.length) {
+      return;
+    }
 
-  setText(words.join(" ") + " ");
-  setSuggestions([]);
-}
- function handleKeyDown(event) {
-  console.log("Key pressed:", event.key);
-  if (!suggestions.length) {
-    return;
-  }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
 
-  switch (event.key) {
-  case "ArrowDown":
-  event.preventDefault();
+      setSelectedIndex((index) => (index + 1) % suggestions.length);
+      return;
+    }
 
-  setSelectedIndex((index) => {
-    const next = (index + 1) % suggestions.length;
-    return next;
-  });
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
 
-  requestAnimationFrame(() => {
-    inputRef.current?.focus();
-  });
+      setSelectedIndex(
+        (index) => (index - 1 + suggestions.length) % suggestions.length
+      );
+      return;
+    }
 
-  break;
-   
-  case "ArrowUp":
-  event.preventDefault();
+    if (event.key === "Enter" || event.key === "Tab") {
+      event.preventDefault();
 
-  setSelectedIndex((index) => {
-    const next =
-      (index - 1 + suggestions.length) % suggestions.length;
-    return next;
-  });
-  requestAnimationFrame(() => {
-    inputRef.current?.focus();
-  });
+      const selected = suggestions[selectedIndex];
 
-  break;
+      if (selected) {
+        handleSuggestionClick(selected.word);
+      }
 
-  case "Enter":
-  event.preventDefault();
+      return;
+    }
 
-  if (suggestions.length > 0) {
-    handleSuggestionClick(
-      suggestions[selectedIndex].word
-    );
-  }
-
-  break;
-
-case "Tab":
-  event.preventDefault();
-
-  if (suggestions.length > 0) {
-    handleSuggestionClick(
-      suggestions[selectedIndex].word
-    );
-  }
-
-  break;
-
-    case "Escape":
+    if (event.key === "Escape") {
+      event.preventDefault();
       setSuggestions([]);
-      break;
-
-    default:
-      break;
+      setSelectedIndex(0);
+    }
   }
-}
-console.log("selectedIndex =", selectedIndex);
+
+  function clearText() {
+    requestIdRef.current += 1;
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    setText("");
+    setSuggestions([]);
+    setSelectedIndex(0);
+    setError("");
+
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+  }
+
+  function loadExample(example) {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    setText(example);
+    setSuggestions([]);
+    setSelectedIndex(0);
+    setError("");
+
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(example);
+    }, 35);
+
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+  }
+
   return (
-    <div
-      style={{
-        maxWidth: "700px",
-        margin: "40px auto",
-        padding: "20px",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <h1>🌍 AfriLingua AI</h1>
+    <main className="app-shell">
+      <section className="keyboard-card">
+        <header className="app-header">
+          <div className="brand-mark">A</div>
 
-      <p>
-        Intelligent Yoruba predictive keyboard powered by AI.
-      </p>
+          <div>
+            <p className="eyebrow">AFRILINGUA AI</p>
+            <h1>Yorùbá Predictive Keyboard</h1>
+            <p className="subtitle">
+              Type naturally. Get intelligent Yorùbá word and next-word
+              suggestions.
+            </p>
+          </div>
+        </header>
 
-      <SearchBox
-      ref={inputRef}
-      value={text}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      />
+        <section className="keyboard-panel">
+          <div className="input-header">
+            <span>Yorùbá</span>
 
-      <SuggestionBar
-        suggestions={suggestions}
-        selectedIndex={selectedIndex}
-        onSelect={handleSuggestionClick}
-      />
-    </div>
+            <div className="input-status">
+              {loading && <span className="status-dot">Predicting…</span>}
+
+              {text && !loading && (
+                <button
+                  type="button"
+                  className="clear-button"
+                  onClick={clearText}
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
+          <SearchBox
+            ref={inputRef}
+            value={text}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
+
+          <SuggestionBar
+            suggestions={suggestions}
+            selectedIndex={selectedIndex}
+            onSelect={handleSuggestionClick}
+          />
+
+          {error && <p className="error-message">{error}</p>}
+
+          {!text && (
+            <div className="keyboard-hint">
+              <span>Try:</span>
+
+              <button
+                type="button"
+                onClick={() => loadExample("ọmọ náà fẹ́")}
+              >
+                ọmọ náà fẹ́
+              </button>
+
+              <button
+                type="button"
+                onClick={() => loadExample("mo fẹ́ lọ")}
+              >
+                mo fẹ́ lọ
+              </button>
+            </div>
+          )}
+        </section>
+
+        <footer className="keyboard-footer">
+          <div className="feature">
+            <span className="feature-icon">Aa</span>
+            <div>
+              <strong>Tone aware</strong>
+              <span>Yorùbá diacritics preserved</span>
+            </div>
+          </div>
+
+          <div className="feature">
+            <span className="feature-icon">→</span>
+            <div>
+              <strong>Context aware</strong>
+              <span>Predicts what comes next</span>
+            </div>
+          </div>
+
+          <div className="feature">
+            <span className="feature-icon">AI</span>
+            <div>
+              <strong>Adaptive</strong>
+              <span>Learns from your selections</span>
+            </div>
+          </div>
+        </footer>
+      </section>
+    </main>
   );
 }
 

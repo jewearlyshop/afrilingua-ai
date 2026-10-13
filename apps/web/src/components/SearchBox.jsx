@@ -1,25 +1,23 @@
-import { forwardRef } from "react";
+﻿import { forwardRef } from "react";
 
 const SearchBox = forwardRef(function SearchBox(
   { value, onChange, onKeyDown },
   ref
 ) {
   return (
-    <input
-      ref={ref}
-      value={value}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
-      placeholder="Type Yoruba..."
-      style={{
-        width: "100%",
-        padding: "16px",
-        fontSize: "24px",
-        borderRadius: "10px",
-        border: "1px solid #ccc",
-        boxSizing: "border-box",
-      }}
-    />
+    <div className="search-box">
+      <textarea
+        ref={ref}
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        placeholder="Type in Yorùbá…"
+        rows={3}
+        spellCheck={false}
+        autoComplete="off"
+        aria-label="Yorùbá predictive keyboard input"
+      />
+    </div>
   );
 });
 

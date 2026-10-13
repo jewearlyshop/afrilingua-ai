@@ -1,4 +1,4 @@
-function SuggestionBar({
+﻿function SuggestionBar({
   suggestions,
   selectedIndex,
   onSelect,
@@ -8,41 +8,36 @@ function SuggestionBar({
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "10px",
-        flexWrap: "wrap",
-        marginTop: "20px",
-      }}
-    >
-      {suggestions.map((item, index) => (
-        <button
-  key={item.word}
-  onClick={() => onSelect(item.word)}
-  tabIndex={-1}
-  style={{
-    padding: "10px 16px",
-    borderRadius: "20px",
-    border:
-      index === selectedIndex
-        ? "2px solid #2563eb"
-        : "1px solid #ccc",
-    cursor: "pointer",
-    fontSize: "16px",
-    backgroundColor:
-      index === selectedIndex
-        ? "#dbeafe"
-        : "#f5f5f5",
-    fontWeight:
-      index === selectedIndex
-        ? "bold"
-        : "normal",
-  }}
->
-  {item.word}
-</button>
-      ))}
+    <div className="suggestion-area">
+      <div className="suggestion-label">
+        Suggestions
+      </div>
+
+      <div
+        className="suggestion-bar"
+        role="listbox"
+        aria-label="Yorùbá word suggestions"
+      >
+        {suggestions.map((item, index) => (
+          <button
+            key={`${item.word}-${index}`}
+            type="button"
+            role="option"
+            aria-selected={index === selectedIndex}
+            className={`suggestion-button ${
+              index === selectedIndex ? "selected" : ""
+            }`}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => onSelect(item.word)}
+          >
+            <span>{item.word}</span>
+
+            {index === selectedIndex && (
+              <kbd>↵</kbd>
+            )}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
